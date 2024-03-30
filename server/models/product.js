@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const ProductSchema = new mongoose.Schema({
+    //product pic (ma3reftch chnu type)
     id: { type: Number, required: true},
     name: { type: String, required: true },
     description: { type: Text, required: true },
