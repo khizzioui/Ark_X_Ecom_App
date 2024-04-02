@@ -15,7 +15,7 @@ router.get("/search",async (rep,res)=>{
         const page = parselnt(req.query.page) - 1 || O;
         const limit = parselnt(req.query.limit) || 5;
         const search = req.query.q || "";
-        let sort = req.query.sort || "rating";
+        let sort = req.query.sort || "favorite";
         let categorie = req.query.categorie || "ALL";
         let categories = [];
         categorie === "ALL"? (categories=[...allgenre]):req.query.genre.split(",");
@@ -27,7 +27,7 @@ router.get("/search",async (rep,res)=>{
         else{
             sortby[sort[0]]="asc";
         }
-        const products= await Product.find({name:{$regex:search,$options:"i"}})
+        const products = await Product.find({name:{$regex:search,$options:"i"}})
                                      .where("genre")
                                      .in([...categories])
                                      .sort(sortby)
