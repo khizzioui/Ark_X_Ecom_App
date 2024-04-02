@@ -22,3 +22,5 @@ mongoose. connect(process.env.DB_URL, { useUnifiedTopology: true } )
 app.get('/' ,(req, res) => {
     res.send("/ route")
 });
+app.js
+
