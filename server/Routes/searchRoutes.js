@@ -1,8 +1,8 @@
 const { Router } = require("express");
 
 const router = require("express").Router();
-const searchController = require("../controller/searchController");
-const { searchMiddleware } = require("../middleware/searchMiddleware");
+const searchController = require('../Controllers/searchController');
+const  searchMiddleware  = require('../Middlewares/searchMiddleware');
 
 
 
