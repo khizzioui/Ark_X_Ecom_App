@@ -1,4 +1,4 @@
-const Product = require('../models/product');
+const Product = require('../Models/product');
 
 const productController = {
     getAllPost: async (req, res) => {
