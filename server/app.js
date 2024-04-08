@@ -25,6 +25,7 @@ app.get('/' ,(req, res) => {
 
 
 
+
 app.use("/api",userRoutes);
 app.use("/api",searchRoute);
 app.use("/api",productRoutes);
@@ -37,3 +38,4 @@ mongoose.connect(process.env.DB_URL, { } )
     app.listen(process.env.PORT || 3000)
 })
 .catch((err) => console.log(err));
+
