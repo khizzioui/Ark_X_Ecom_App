@@ -1,7 +1,7 @@
 const Product = require('../Models/product');
 
 const productController = {
-    getAllPost: async (req, res) => {
+    getAllProducts: async (req, res) => {
         try {
             const products = await Product.find();
             res.json(products);
@@ -11,7 +11,7 @@ const productController = {
         }
     },
 
-    getPostById: async (req, res) => {
+    getProductById: async (req, res) => {
         const productId = req.params.id;
         try {
             const product = await Product.findById(productId);
