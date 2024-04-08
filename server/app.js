@@ -1,7 +1,11 @@
 // Load environment variables from .env file
 require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose') ;
+const mongoose = require('mongoose');
+const cors = require("cors");
+//const searchRoute =require('./Routes/searchRoutes')
+const productRoutes = require('./routes/productRoutes');
+const userRoutes = require('./Routes/userRoutes');
 
 
 
@@ -9,18 +13,29 @@ const mongoose = require('mongoose') ;
 
 
 app = express();
+app.use(express.json());
 
-// database connection
-const DB_URL = 'mongodb+srv://E-commerce-Project:arkx123@adnane-cluster.2aph9sv.mongodb.net/' ;
-mongoose. connect(process.env.DB_URL, { useUnifiedTopology: true } )
-.then((result) => app.listen(process.env.PORT || 3000))
-.catch((err) => console.log(err));
-
-
+app.use(cors());
 
 // routes
 app.get('/' ,(req, res) => {
     res.send("/ route")
 });
-app.js
+
+
+
+
+
+app.use("/api",userRoutes);
+app.use("/api",searchRoute);
+app.use("/api",productRoutes);
+
+
+
+// database connection
+mongoose.connect(process.env.DB_URL, { } )
+.then((result) => {
+    app.listen(process.env.PORT || 3000)
+})
+.catch((err) => console.log(err));
 
