@@ -1,46 +1,13 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
-const keys = require('../config/keys');
-const bcrypt = require('bcrypt');
-const Superadmin = require('../models/superadmin');
 const router = express.Router();
+const { registerSuperadmin, loginSuperadmin } = require('../controllers/superadminController');
+const authJwt = require('../middleware/authJwt');
 
-// Superadmin registration
-router.post('/register', async (req, res) => {
- const { username, password } = req.body;
- try {
-    let superadmin = await Superadmin.findOne({ username });
-    if (superadmin) {
-      return res.status(400).json({ superadmin: 'Superadmin already exists' });
-    }
-    superadmin = new Superadmin({ username, password });
-    await superadmin.save();
-    const token = jwt.sign({ id: superadmin.id }, keys.jwtSecret, { expiresIn: 3600 });
-    res.json({ token });
- } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
- }
-});
+//router.use(authJwt); 
+// Register a new superadmin
+router.post('/register', registerSuperadmin);
 
-// Superadmin login
-router.post('/login', async (req, res) => {
- const { username, password } = req.body;
- try {
-    let superadmin = await Superadmin.findOne({ username });
-    if (!superadmin) {
-      return res.status(400).json({ superadmin: 'Superadmin not found' });
-    }
-    const validPassword = await bcrypt.compare(password, superadmin.password);
-    if (!validPassword) {
-      return res.status(400).json({ superadmin: 'Invalid credentials' });
-    }
-    const token = jwt.sign({ id: superadmin.id }, keys.jwtSecret, { expiresIn: 3600 });
-    res.json({ token });
- } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
- }
-});
+// Login superadmin
+router.post('/login', loginSuperadmin);
 
 module.exports = router;
