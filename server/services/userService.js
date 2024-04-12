@@ -1,5 +1,5 @@
 require("dotenv").config();
-const User = require('../models/user');
+const User = require('../Models/user');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -17,7 +17,6 @@ const registerUser = async (userData) => {
   }
 
   const existingUser = await User.findOne({ email: email });
-
   if (existingUser) {
     throw new Error("User already exists");
   }
@@ -29,7 +28,6 @@ const registerUser = async (userData) => {
     lastName,
     email,
     password: hashedPassword,
-    confirmPassword: hashedPassword,
   });
 
   try {
@@ -41,39 +39,34 @@ const registerUser = async (userData) => {
 };
 
 const loginUser = async (userData) => {
-  try {
-    const { email, password } = userData;
-    if (!email || !password) {
-      throw new Error("Please enter all fields");
-    }
-
-    const user = await User.findOne({ email: email });
-
-    if (!user) {
-      throw new Error("User does not exist");
-    }
-
-    const validPassword = await bcrypt.compare(password, user.password);
-
-    if (!validPassword) {
-      throw new Error("Invalid credentials");
-    }
-
-    const accessToken = jwt.sign(
-      { id: user._id },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "15m" }
-    );
-    const refreshToken = jwt.sign(
-      { id: user._id },
-      process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    return { accessToken, refreshToken };
-  } catch (err) {
-    res.status(400).json({ message: err });
+  const { email, password } = userData;
+  if (!email || !password) {
+    throw new Error("Please enter all fields");
   }
+
+  const user = await User.findOne({ email: email });
+  if (!user) {
+    throw new Error("User does not exist");
+  }
+
+  const validPassword = await bcrypt.compare(password, user.password);
+  if (!validPassword) {
+    throw new Error("Invalid credentials");
+  }
+
+  const accessToken = jwt.sign(
+    { id: user._id },
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: "15m" }
+  );
+  const refreshToken = jwt.sign(
+    { id: user._id },
+    process.env.REFRESH_TOKEN_SECRET,
+    { expiresIn: "7d" }
+  );
+
+  return { accessToken, refreshToken };
 };
+
 
 module.exports = { registerUser, loginUser };

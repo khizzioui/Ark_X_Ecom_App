@@ -25,12 +25,6 @@ const userSchema = new mongoose.Schema({
     max: 1024,
     min: 6,
   },
-  confirmPassword: {
-    type: String,
-    required: true,
-    max: 1024,
-    min: 6,
-  },
   dateOfBirth: {
     type: Date,
     required: false,
@@ -42,6 +36,12 @@ const userSchema = new mongoose.Schema({
     min: 6,
   },
   city: {
+    type: String,
+    required: false,
+    max: 1024,
+    min: 6,
+  },
+  phoneNumber: {
     type: String,
     required: false,
     max: 1024,
