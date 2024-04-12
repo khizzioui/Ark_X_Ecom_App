@@ -10,6 +10,7 @@ const register = async (req, res) => {
       password,
       confirmPassword,
     });
+    res.status(201).json({ message: "User registered successfully", user: newUser });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -25,8 +26,13 @@ const login = async (req, res) => {
         httpOnly: true,
         sameSite: "strict",
       })
-      .header("Authorization", `Bearer ${accessToken}`)
-      .send({ accessToken });
+      .cookie("accessToken", accessToken, {
+        httpOnly: true,
+        sameSite: "strict",
+      })
+      //.header("Authorization", `Bearer ${accessToken}`)
+      .send('Logged in');
+      
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

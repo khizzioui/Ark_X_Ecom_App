@@ -41,6 +41,12 @@ const userSchema = new mongoose.Schema({
     max: 1024,
     min: 6,
   },
+  phoneNumber: {
+    type: String,
+    required: false,
+    max: 1024,
+    min: 6,
+  },
 });
 
 module.exports = mongoose.model("User", userSchema);
