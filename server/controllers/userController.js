@@ -18,7 +18,6 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
     const { accessToken, refreshToken } = await userService.loginUser({ email, password });
 
     res
@@ -32,6 +31,7 @@ const login = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
 
 
 module.exports = { register, login };
