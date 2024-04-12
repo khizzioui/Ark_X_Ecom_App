@@ -17,7 +17,6 @@ const registerUser = async (userData) => {
   }
 
   const existingUser = await User.findOne({ email: email });
-
   if (existingUser) {
     throw new Error("User already exists");
   }
@@ -29,7 +28,6 @@ const registerUser = async (userData) => {
     lastName,
     email,
     password: hashedPassword,
-    confirmPassword: hashedPassword,
   });
 
   try {
