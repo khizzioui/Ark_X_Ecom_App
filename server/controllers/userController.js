@@ -38,6 +38,9 @@ const login = async (req, res) => {
   }
 };
 
+const logout = async (req, res) => {
+  res.clearCookie("refreshToken").clearCookie("accessToken").send("Logged out");
+};
 
 
-module.exports = { register, login };
+module.exports = { register, login, logout };
