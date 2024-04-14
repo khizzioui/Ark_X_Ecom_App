@@ -1,62 +1,78 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const Superadmin = require('../models/superadmin');
 const keys = require('../config/keys');
+const {adminService} = require('../services/adminService');
+
 
 // Function to register a new superadmin
 const registerSuperadmin = async (req, res) => {
-  try {
-    const { username, password } = req.body;
+    const data = req.body;
 
-    // Check if the Superadmin already exists
-    let existingSuperadmin = await Superadmin.findOne({ username });
-    if (existingSuperadmin) {
-      return res.status(400).json({ message: 'Superadmin already exists' });
-    }
-
-    // Hash the password
-    // const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create a new Superadmin with hashed password
-  const superadmin = new Superadmin({ username : username , password }); 
-    await superadmin.save();
-
-    console.log('Creating superadmin with username:', username);
-    res.status(201).json({ message: 'Superadmin created successfully' });
-  } catch (error) {
-    console.error('Error creating superadmin:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
+   const response = await adminService.adminRegister(data) 
+   if (response.error && response.error == "User with this username already exist") 
+   return res.status(409).send ({error: 'admin already in use'}) ;
+   if (response.error && response.error == 'Internal server error') 
+   return res.status(500).send ({error: 'Server error'}) ;
+  return  res.status(201).send({message:'Admin registered successfully', user : response.admin});
 };
 
 
 // Function to log in a superadmin
 const loginSuperadmin = async (req, res) => {
-  const { username, password } = req.body;
-  try {
-      const superadmin = await Superadmin.findOne({ username });
-      if (!superadmin) {
-        return res.status(400).json({ message: 'Superadmin not found' });
-      }
-  
-      const validPassword = await bcrypt.compare(password, superadmin.password);
-      if (!validPassword) {
-        return res.status(400).json({ message: 'Invalid credentials' });
-      }
-  
-      // If the password is correct, proceed with generating a JWT token
-      const token = jwt.sign({ id: superadmin._id }, keys.jwtSecret, { expiresIn: '1h' });
-      
-      // Set the token in a cookie
-      res.cookie('token', token, { httpOnly: true, maxAge: 3600000 }); // 1 hour
-      res.json({ message: 'Logged in successfully' });
-  } catch (error) {
-      console.error('Error logging in superadmin:', error);
-      res.status(500).json({ error: 'Internal server error' });
+  const data = req.body;
+
+  const response = await adminService.adminLogin(data);
+  if (response.error) {
+      return res.status(400).json({ error: response.error });
   }
- };
+  res.cookie('token', response.token, { httpOnly: true, maxAge: 3600000 }).status(200).json({ message: response.message , user: response.admin});
+};
 
 
-module.exports = { registerSuperadmin, loginSuperadmin };
+// Function to see all users (accessible only by admin)
+const seeAllUsers = async (req, res) => {
+  const response = await adminService.seeUsers();
+  if (response.error) {
+      return res.status(500).json({ error: response.error });
+  }
+    res.status(200).json({ users: response.users });
+};
 
-  
+// Function to delete a user (accessible only by admin)
+const deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const response = await adminService.deleteUser(userId);
+    console.log(response.message);
+    res.send({ message: response.message,user: response.user });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+const getAllProducts = async (req, res) => {
+  try {
+    const response = await adminService.seeProducts();
+    if (response.error) {
+      return res.status(500).json({ error: response.error });
+    }
+    res.status(200).json({ products: response.products });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// Function to delete a product (accessible only by admin)
+const deleteProduct = async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    const response = await adminService.deleteProduct(productId);
+    console.log(response.message);
+    res.send({ message: response.message, product: response.product });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+module.exports = { registerSuperadmin, loginSuperadmin, seeAllUsers, deleteUser, getAllProducts, deleteProduct };

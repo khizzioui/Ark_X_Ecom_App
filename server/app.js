@@ -6,8 +6,11 @@ const cors = require("cors");
 const searchRoute =require('./Routes/searchRoutes')
 const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./Routes/userRoutes');
+const adminroute = require('./Routes/superadmin')
+
 const auth = require('./Middlewares/authMiddleware');
 const cookieParser = require('cookie-parser');
+
 
 
 
@@ -25,7 +28,7 @@ app.get('/' ,(req, res) => {
 
 
 
-
+app.use("/api", adminroute);
 app.use("/api",userRoutes);
 app.use("/api",searchRoute);
 app.use("/api",productRoutes);
