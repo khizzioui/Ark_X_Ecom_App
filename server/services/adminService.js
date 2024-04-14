@@ -1,5 +1,5 @@
 const Product = require('../Models/product');
-const user = require('../models/user');
+const user = require('../Models/user');
 const Superadmin = require('../models/superadmin')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
