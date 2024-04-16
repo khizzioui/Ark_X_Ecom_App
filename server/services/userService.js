@@ -57,15 +57,15 @@ const loginUser = async (userData) => {
   const accessToken = jwt.sign(
     { id: user._id },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "15m" }
+    { expiresIn: "1d" } 
   );
-  const refreshToken = jwt.sign(
-    { id: user._id },
-    process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "7d" }
-  );
+  // const refreshToken = jwt.sign(
+  //   { id: user._id },
+  //   process.env.REFRESH_TOKEN_SECRET,
+  //   { expiresIn: "7d" }
+  // );
 
-  return { accessToken, refreshToken };
+  return { accessToken };
 };
 
 const updateUserProfile = async(userId, userData) => {
