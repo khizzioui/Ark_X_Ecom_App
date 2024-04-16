@@ -59,14 +59,14 @@ const productService = {
 
         try {
             const product = await Product.findById(productData.id)
-            const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+            const user = jwt.verify(token.accessToken, process.env.ACCESS_TOKEN_SECRET)
 
             if (product.userId != user.id) {
                 return { error: 3 }
             }
 
             const updatedProduct = await Product.findByIdAndUpdate(productData.id, productData, { new: true });
-
+            
             if (!updatedProduct) {
                 return ({ error: 1 })
             }
@@ -85,7 +85,7 @@ const productService = {
             if (!Product) {
                 return ({ error: 1 });
             }
-            const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+            const user = jwt.verify(token.accessToken, process.env.ACCESS_TOKEN_SECRET)
 
             if (product.userId != user.id) {
                 return { error: 3 }
