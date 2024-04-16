@@ -13,7 +13,7 @@ const registerSuperadmin = async (req, res) => {
    return res.status(409).send ({error: 'admin already in use'}) ;
    if (response.error && response.error == 'Internal server error') 
    return res.status(500).send ({error: 'Server error'}) ;
-  return  res.status(201).send({message:'Admin registered successfully', user : response.admin});
+  return  res.status(201).send({message:'Admin registered successfully',admin : response.admin});
 };
 
 
