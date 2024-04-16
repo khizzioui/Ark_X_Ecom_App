@@ -13,10 +13,8 @@ adminRegister : async (data) =>{
         if (existingSuperadmin) {
             return {error : "User with this username already exist"};
         }
-        // Hash the password
-        // const hashedPassword = await bcrypt.hash(password, 10);
-    
-        // Create a new Superadmin with hashed password
+        
+        console.log('register')
         const superadmin = new Superadmin({ username: data.username, password : data.password });
          const admin = await  superadmin.save();
         
