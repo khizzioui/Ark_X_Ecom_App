@@ -1,4 +1,3 @@
-const { getMaxListeners } = require("../Models/product");
 const userService = require("../services/userService");
 
 const register = async (req, res) => {
@@ -22,21 +21,21 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const { accessToken, refreshToken } = await userService.loginUser({
+    const accessToken = await userService.loginUser({
       email,
       password,
     });
 
     res
-      .cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        sameSite: "strict",
-        maxAge : 7 * 24 * 60 * 60 * 1000, // 7 days
-      })
+      // .cookie("refreshToken", refreshToken, {
+      //   httpOnly: true,
+      //   sameSite: "strict",
+      //   maxAge : 7 * 24 * 60 * 60 * 1000,
+      // })
       .cookie("accessToken", accessToken, {
         httpOnly: true,
         sameSite: "strict",
-        maxAge :  15 * 60 * 1000, // 15 minutes
+        maxAge :  24 * 60 * 60 * 1000,
 
       })
       .send("Logged in");
@@ -46,7 +45,9 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  res.clearCookie("refreshToken").clearCookie("accessToken").send("Logged out");
+  res
+    .clearCookie("accessToken")
+    .send("Logged out");
 };
 
 const updateProfile = async (req, res) => {
