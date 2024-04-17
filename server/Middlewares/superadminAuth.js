@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const keys = require('../config/keys');
+const { check, validationResult } = require('express-validator');
 
 function authJwt(req, res, next) {
     const token = req.header('Authorization');
@@ -32,4 +33,23 @@ const isAdmin = (req, res, next) => {
         res.status(400).send('Invalid Token');
     }
 };
-  module.exports = { authJwt, isAdmin };
+
+const userValidationMiddleware = [
+    check('username')
+        .isLength({ min: 3, max: 20 }).withMessage('Username must be between 3 and 20 characters long')
+        .matches(/^[a-zA-Z0-9_-]+$/).withMessage('Username may contain only alphanumeric characters, underscores, or hyphens'),
+    check('password')
+        .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long')
+        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
+        .withMessage('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+];
+
+
+  module.exports = { authJwt, isAdmin , userValidationMiddleware };
