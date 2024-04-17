@@ -1,13 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { registerSuperadmin, loginSuperadmin, seeAllUsers, deleteUser, getAllProducts, deleteProduct } = require('../controllers/superadminController');
-const { authJwt, isAdmin } = require('../Middlewares/superadminAuth');
+const { isAdmin ,userValidationMiddleware } = require('../Middlewares/superadminAuth');
 
 // Register a new superadmin
-router.post('/admin/register', registerSuperadmin);
-//router.use(authJwt); 
+router.post('/admin/register',userValidationMiddleware,  registerSuperadmin);
 // Login superadmin
-router.post('/admin/login', loginSuperadmin);
+router.post('/admin/login',userValidationMiddleware,loginSuperadmin);
 // See all users (accessible only by admin)
 router.get('/admin/users', isAdmin, seeAllUsers);
 // Delete user (accessible only by admin)
