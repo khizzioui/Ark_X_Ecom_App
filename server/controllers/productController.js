@@ -21,7 +21,8 @@ const productController = {
                 images : req.body.images,
                 title : req.body.title,
                 description : req.body.description || '',
-                userId:req.body.userId,
+                user:req.body.user,
+                location: req.body.location,
                 tags : req.body.tags || '',
                 price : req.body.price,
                 quantity : req.body.quantity || 1
@@ -45,6 +46,7 @@ const productController = {
             images : req.body.images,
             title : req.body.title,
             description : req.body.description || '',
+            location: req.body.location,
             tags : req.body.tags || '',
             price : req.body.price,
             quantity : req.body.quantity || 1
