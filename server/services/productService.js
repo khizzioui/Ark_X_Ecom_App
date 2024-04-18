@@ -35,7 +35,8 @@ const productService = {
                 images: productData.images,
                 title: productData.title,
                 description: productData.description,
-                userId: productData.userId,
+                user: productData.user,
+                location: productData.location,
                 tags: productData.tags,
                 price: productData.price,
                 quantity: productData.quantity
