@@ -1,6 +1,6 @@
 const Product = require('../Models/product');
 const user = require('../Models/user');
-const Superadmin = require('../models/superadmin')
+const Superadmin = require('../models/admin')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const keys = require('../config/keys');

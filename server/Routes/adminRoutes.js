@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { registerSuperadmin, loginSuperadmin, seeAllUsers, deleteUser, getAllProducts, deleteProduct } = require('../controllers/superadminController');
-const { isAdmin ,userValidationMiddleware } = require('../Middlewares/superadminAuth');
+const { registerSuperadmin, loginSuperadmin, seeAllUsers, deleteUser, getAllProducts, deleteProduct } = require('../controllers/adminController');
+const { isAdmin ,adminValidationMiddleware } = require('../Middlewares/adminAuth');
 
 // Register a new superadmin
-router.post('/admin/register',userValidationMiddleware,  registerSuperadmin);
+router.post('/admin/register',adminValidationMiddleware,  registerSuperadmin);
 // Login superadmin
-router.post('/admin/login',userValidationMiddleware,loginSuperadmin);
+router.post('/admin/login',adminValidationMiddleware,loginSuperadmin);
 // See all users (accessible only by admin)
 router.get('/admin/users', isAdmin, seeAllUsers);
 // Delete user (accessible only by admin)

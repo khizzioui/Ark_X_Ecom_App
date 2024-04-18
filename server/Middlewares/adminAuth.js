@@ -34,7 +34,7 @@ const isAdmin = (req, res, next) => {
     }
 };
 
-const userValidationMiddleware = [
+const adminValidationMiddleware = [
     check('username')
         .isLength({ min: 3, max: 20 }).withMessage('Username must be between 3 and 20 characters long')
         .matches(/^[a-zA-Z0-9_-]+$/).withMessage('Username may contain only alphanumeric characters, underscores, or hyphens'),
@@ -52,4 +52,4 @@ const userValidationMiddleware = [
 ];
 
 
-  module.exports = { authJwt, isAdmin , userValidationMiddleware };
+  module.exports = { authJwt, isAdmin , adminValidationMiddleware };
