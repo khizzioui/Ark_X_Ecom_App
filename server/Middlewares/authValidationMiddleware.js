@@ -28,7 +28,8 @@ const registerValidation = () => [
         .matches(/\d/)
         .withMessage('Password must contain a number')
         .matches(/[!@#$%^&*(),.?":{}|<>]/)
-        .withMessage('Password must contain a special character')
+        .withMessage('Password must contain a special character'),
+        validate
 
 ];
 
@@ -46,7 +47,8 @@ const loginValidation = () => [
         .matches(/\d/)
         .withMessage('Password must contain a number')
         .matches(/[!@#$%^&*(),.?":{}|<>]/)
-        .withMessage('Password must contain a special character')
+        .withMessage('Password must contain a special character'), 
+        validate
 ];
 
 const validate = (req, res, next) => {
