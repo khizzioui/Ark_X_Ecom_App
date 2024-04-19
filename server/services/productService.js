@@ -1,82 +1,112 @@
 const Product = require('../Models/product');
+const Location = require('../Models/location');
+const jwt = require("jsonwebtoken");
+
 
 const productService = {
     getAllProducts: async () => {
         try {
             const products = await Product.find();
-            return ( products);
-            
+            return (products);
+
         } catch (error) {
             console.error("Error :", error);
-            return("Error :", error);
+            return ("Error :", error);
         }
     },
 
     getProductById: async (productId) => {
         try {
-            const product = await Product.findById(productId);
+            const product = await Product.findById(productId).populate('user');
             if (!product) {
-                return('Produt not found');
+                return ('Produt not found');
             }
-            return(product);
+            return (product);
         } catch (error) {
             console.error("Error fetching product by ID:", error);
-            return("Error :", error)
-            
+            return ("Error :", error)
+
         }
     },
 
     addProduct: async (productData) => {
         try {
-    
+            const location = await Location.findById(productData.locationId)
             const product = new Product({
                 images: productData.images,
                 title: productData.title,
                 description: productData.description,
+                user: productData.userId,
+                locationName:location.name,
+                location: { // Embedding location object with coordinates
+                    type: "Point",
+                    coordinates: location.location.coordinates
+                },
                 tags: productData.tags,
                 price: productData.price,
                 quantity: productData.quantity
             });
-    
-            await product.save();
-            return(product);
+
+            const savedProd = await product.save();
+            if(!savedProd){
+                return {error:1};
+            }
+            return { success: "Product saved successfully", product: savedProd };
             
+
         } catch (error) {
             console.error("Error adding product:", error);
-            return("error :", error);
-            
+            return { error: 2 }
+
         }
     },
 
-    updateProduct: async (productData) => {
+    updateProduct: async (productData, token) => {
 
         try {
-            const updatedProduct = await Product.findByIdAndUpdate(productData.id, productData, { new: true });
-            if (!updatedProduct) {
-                return('Product not found');
+            const product = await Product.findById(productData.id)
+            const user = jwt.verify(token.accessToken, process.env.ACCESS_TOKEN_SECRET)
+
+            if (product.userId != user.id) {
+                return { error: 3 }
             }
-            return(updatedProduct);
+
+            const updatedProduct = await Product.findByIdAndUpdate(productData.id, productData, { new: true });
+
+            if (!updatedProduct) {
+                return ({ error: 1 })
+            }
+            return { success: "product updated", product: updatedProduct };
         } catch (error) {
             console.error("Error updating product:", error);
-            return("Error : ",error);
+            return { error: 2 }
         }
     },
-    
 
-    deleteProduct: async (productId) => {
+
+    deleteProduct: async (productId, token) => {
 
         try {
-            const deletedProduct = await Product.findByIdAndDelete(productId);
-            if (!deletedProduct) {
-                return('Product not found');
+            const product = await Product.findById(productId);
+            if (!Product) {
+                return ({ error: 1 });
             }
-            return('Product deleted successfully');
+            const user = jwt.verify(token.accessToken, process.env.ACCESS_TOKEN_SECRET)
+
+            if (product.userId != user.id) {
+                return { error: 3 }
+            }
+
+            const deletedProduct = await Product.findByIdAndDelete(productId);
+
+            return { success: "Product deleted successfully", product: deletedProduct };
         } catch (error) {
             console.error("Error deleting product:", error);
-            return("error :", error);
+            return { error: 2 }
         }
     }
 
+
 }
 
-module.exports = productService;
+module.exports = productService

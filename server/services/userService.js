@@ -1,5 +1,5 @@
 require("dotenv").config();
-const User = require('../Models/user');
+const User = require("../Models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -57,16 +57,34 @@ const loginUser = async (userData) => {
   const accessToken = jwt.sign(
     { id: user._id },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "15m" }
+    { expiresIn: "1d" } 
   );
-  const refreshToken = jwt.sign(
-    { id: user._id },
-    process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "7d" }
-  );
+  // const refreshToken = jwt.sign(
+  //   { id: user._id },
+  //   process.env.REFRESH_TOKEN_SECRET,
+  //   { expiresIn: "7d" }
+  // );
 
-  return { accessToken, refreshToken };
+  return { accessToken };
 };
 
+const updateUserProfile = async(userId, userData) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new Error("User does not exist");
+  }
 
-module.exports = { registerUser, loginUser };
+  //update dateOfBirth, address, city, phoneNumber
+  user.dateOfBirth = userData.dateOfBirth || user.dateOfBirth;
+  user.address = userData.address || user.address;
+  user.city = userData.city || user.city;
+  user.phoneNumber = userData.phoneNumber || user.phoneNumber;
+  try{
+    const updatedUser = await user.save();
+    return updatedUser;
+  }catch(err){
+    throw err;
+  }
+};
+
+module.exports = { registerUser, loginUser, updateUserProfile };

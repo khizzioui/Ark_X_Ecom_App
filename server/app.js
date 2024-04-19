@@ -6,7 +6,7 @@ const cors = require("cors");
 const searchRoute =require('./Routes/searchRoutes')
 const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./Routes/userRoutes');
-const adminroute = require('./Routes/superadmin')
+const adminroute = require('./Routes/adminRoutes')
 
 const auth = require('./Middlewares/authMiddleware');
 const cookieParser = require('cookie-parser');

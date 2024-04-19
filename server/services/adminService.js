@@ -1,6 +1,6 @@
 const Product = require('../Models/product');
-const user = require('../models/user');
-const Superadmin = require('../models/superadmin')
+const user = require('../Models/user');
+const Superadmin = require('../models/admin')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const keys = require('../config/keys');
@@ -13,10 +13,8 @@ adminRegister : async (data) =>{
         if (existingSuperadmin) {
             return {error : "User with this username already exist"};
         }
-        // Hash the password
-        // const hashedPassword = await bcrypt.hash(password, 10);
-    
-        // Create a new Superadmin with hashed password
+        
+        console.log('register')
         const superadmin = new Superadmin({ username: data.username, password : data.password });
          const admin = await  superadmin.save();
         
