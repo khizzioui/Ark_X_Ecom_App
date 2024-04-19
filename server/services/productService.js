@@ -1,6 +1,7 @@
 const Product = require('../Models/product');
+const Location = require('../Models/location');
 const jwt = require("jsonwebtoken");
-const { login } = require('../controllers/userController');
+
 
 const productService = {
     getAllProducts: async () => {
@@ -16,7 +17,7 @@ const productService = {
 
     getProductById: async (productId) => {
         try {
-            const product = await Product.findById(productId);
+            const product = await Product.findById(productId).populate('user');
             if (!product) {
                 return ('Produt not found');
             }
@@ -30,13 +31,17 @@ const productService = {
 
     addProduct: async (productData) => {
         try {
-
+            const location = await Location.findById(productData.locationId)
             const product = new Product({
                 images: productData.images,
                 title: productData.title,
                 description: productData.description,
-                user: productData.user,
-                location: productData.location,
+                user: productData.userId,
+                locationName:location.name,
+                location: { // Embedding location object with coordinates
+                    type: "Point",
+                    coordinates: location.location.coordinates
+                },
                 tags: productData.tags,
                 price: productData.price,
                 quantity: productData.quantity
@@ -67,7 +72,7 @@ const productService = {
             }
 
             const updatedProduct = await Product.findByIdAndUpdate(productData.id, productData, { new: true });
-            
+
             if (!updatedProduct) {
                 return ({ error: 1 })
             }
@@ -104,4 +109,4 @@ const productService = {
 
 }
 
-module.exports = productService;
+module.exports = productService
