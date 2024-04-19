@@ -25,19 +25,23 @@ const loginSuperadmin = async (req, res) => {
   if (response.error) {
       return res.status(400).json({ error: response.error });
   }
-  res.cookie('token', response.token, { httpOnly: true, maxAge: 3600000 }).status(200).json({ message: response.message , user: response.admin});
+  res.cookie('token', response.token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }).status(200).json({ message: response.message , user: response.admin});
 };
 
 
 // Function to see all users (accessible only by admin)
 const seeAllUsers = async (req, res) => {
-  const response = await adminService.seeUsers();
-  if (response.error) {
-      return res.status(500).json({ error: response.error });
-  }
-    res.status(200).json({ users: response.users });
-};
+  const page = parseInt(req.query.page) || 1; 
+  const limit = parseInt(req.query.limit) || 5;
 
+  const response = await adminService.seeUsers(page, limit);
+
+  if (response.error) {
+    return res.status(500).json({ error: response.error });
+  }
+
+  res.status(200).json({ users: response.users });
+};
 // Function to delete a user (accessible only by admin)
 const deleteUser = async (req, res) => {
   try {
@@ -51,17 +55,17 @@ const deleteUser = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
-  try {
-    const response = await adminService.seeProducts();
-    if (response.error) {
-      return res.status(500).json({ error: response.error });
-    }
-    res.status(200).json({ products: response.products });
-  } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
+  const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
+  const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page if not provided
 
+  const response = await adminService.seeProducts(page, limit);
+
+  if (response.error) {
+    return res.status(500).json({ error: response.error });
+  }
+
+  res.status(200).json({ products: response.products });
+};
 // Function to delete a product (accessible only by admin)
 const deleteProduct = async (req, res) => {
   try {
@@ -73,6 +77,5 @@ const deleteProduct = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
-
 
 module.exports = { registerSuperadmin, loginSuperadmin, seeAllUsers, deleteUser, getAllProducts, deleteProduct };
