@@ -8,11 +8,19 @@ const ProductSchema = new mongoose.Schema({
       ref: 'User',
       required: true 
     },
-    location: { type: mongoose.Schema.Types.ObjectId,
-      ref: 'Location',
-      required: true 
+    locationName:{ type: String, required: true },
+    location: { 
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: "Point"
+      },
+      coordinates: {
+        type: [Number],
+        required: true
+      }
     },
-    category: {  type: mongoose.Schema.Types.ObjectId,
+    categoryId: {  type: mongoose.Schema.Types.ObjectId,
       ref: 'Category',
       // required: true 
     },
@@ -21,7 +29,8 @@ const ProductSchema = new mongoose.Schema({
     quantity: { type: Number, required: true},
     availability: { type: Boolean, default: true}
   });
-   ProductSchema.set('timestamps',true);
+  ProductSchema.index({ location: "2dsphere" });
+  ProductSchema.set('timestamps',true);
   
   const Product = mongoose.model('Product', ProductSchema);
   

@@ -17,24 +17,24 @@ const productController = {
 
     addProduct: async (req,res) => {
             
-            const productData = {
-                images : req.body.images,
-                title : req.body.title,
-                description : req.body.description || '',
-                user:req.body.user,
-                location: req.body.location,
-                tags : req.body.tags || '',
-                price : req.body.price,
-                quantity : req.body.quantity || 1
-            }
+        const productData = {
+            images : req.body.images,
+            title : req.body.title,
+            description : req.body.description || '',
+            userId:req.body.userId,
+            locationId : req.body.locationId,
+            tags : req.body.tags || '',
+            price : req.body.price,
+            quantity : req.body.quantity || 1
+        }
 
-           const result = await productService.addProduct(productData);
-           if(result.error && result.error == 1){
-            res.status(404).json({error:"Error saving the Product"})
-            } else if(result.error && result.error == 2){
-            res.status(500).json({error:"server error"})
-            } else {
-            res.status(201).json({success:result.success,product:result.product});
+        const result = await productService.addProduct(productData);
+        if(result.error && result.error == 1){
+        res.status(404).json({error:"Error saving the Product"})
+        } else if(result.error && result.error == 2){
+        res.status(500).json({error:"server error"})
+        } else {
+        res.status(201).json({success:result.success,product:result.product});
         }
     },
 
@@ -46,7 +46,6 @@ const productController = {
             images : req.body.images,
             title : req.body.title,
             description : req.body.description || '',
-            location: req.body.location,
             tags : req.body.tags || '',
             price : req.body.price,
             quantity : req.body.quantity || 1
