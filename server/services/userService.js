@@ -2,7 +2,7 @@ require("dotenv").config();
 const User = require("../Models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
+const cloudinary = require("../config/cloudinary");
 const saltRounds = 10;
 
 const registerUser = async (userData) => {
@@ -27,6 +27,7 @@ const registerUser = async (userData) => {
     firstName,
     lastName,
     email,
+    profileImagePath: "http://res.cloudinary.com/dpr8zbpid/image/upload/v1714650385/bmzoe7lxiuuduiwqlgmg.webp",
     password: hashedPassword,
   });
 
@@ -68,23 +69,79 @@ const loginUser = async (userData) => {
   return { accessToken };
 };
 
-const updateUserProfile = async(userId, userData) => {
+// const updateUserProfile = async(userId, userData) => {
+//   const user = await User.findById(userId);
+//   if (!user) {
+//     throw new Error("User does not exist");
+//   }
+
+//   //update dateOfBirth, address, city, phoneNumber
+//   user.dateOfBirth = userData.dateOfBirth || user.dateOfBirth;
+//   user.address = userData.address || user.address;
+//   user.city = userData.city || user.city;
+//   user.phoneNumber = userData.phoneNumber || user.phoneNumber;
+//   try{
+//     const updatedUser = await user.save();
+//     return updatedUser;
+//   }catch(err){
+//     throw err;
+//   }
+// };
+
+// const uploadProfileImage = async (userId, image) => {
+//   await cloudinary.uploader.upload(image, {
+//     allowed_formats: ['jpg', 'png', 'jpeg', 'jfif'],
+//   })
+//   .then(result => {
+//     return User.findById(userId)
+//     .then(user => {
+//       if (!user) {
+//         throw new Error("User does not exist");
+//       }
+//       user.profileImagePath = result.url;
+//       return user.save();
+//     })
+//     .the(() => {
+//       return result;
+//     });
+//   })
+//   .catch(err => {
+//     throw new Error(err.message);
+//   });
+// }
+
+const updateUserProfile = async (userId, userData, image) => {
   const user = await User.findById(userId);
   if (!user) {
     throw new Error("User does not exist");
   }
 
-  //update dateOfBirth, address, city, phoneNumber
   user.dateOfBirth = userData.dateOfBirth || user.dateOfBirth;
   user.address = userData.address || user.address;
   user.city = userData.city || user.city;
   user.phoneNumber = userData.phoneNumber || user.phoneNumber;
-  try{
+
+  if (image) {
+      console.log("image");
+      
+      await cloudinary.uploader.upload(image)
+      .then((result) => {
+        console.log(result.url);
+        user.profileImagePath = result.url;
+        
+        
+      }).then(()=>{
+        console.log(user.profileImagePath);
+        const updatedUser =  user.save();
+        return updatedUser;
+      });
+      
+  }else{
     const updatedUser = await user.save();
+    console.log(updatedUser);
     return updatedUser;
-  }catch(err){
-    throw err;
   }
 };
+
 
 module.exports = { registerUser, loginUser, updateUserProfile };
