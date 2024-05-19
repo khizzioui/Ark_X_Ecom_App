@@ -60,73 +60,27 @@ const loginUser = async (userData) => {
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: "1d" } 
   );
-  // const refreshToken = jwt.sign(
-  //   { id: user._id },
-  //   process.env.REFRESH_TOKEN_SECRET,
-  //   { expiresIn: "7d" }
-  // );
-
+  
   return { accessToken };
 };
-
-// const updateUserProfile = async(userId, userData) => {
-//   const user = await User.findById(userId);
-//   if (!user) {
-//     throw new Error("User does not exist");
-//   }
-
-//   //update dateOfBirth, address, city, phoneNumber
-//   user.dateOfBirth = userData.dateOfBirth || user.dateOfBirth;
-//   user.address = userData.address || user.address;
-//   user.city = userData.city || user.city;
-//   user.phoneNumber = userData.phoneNumber || user.phoneNumber;
-//   try{
-//     const updatedUser = await user.save();
-//     return updatedUser;
-//   }catch(err){
-//     throw err;
-//   }
-// };
-
-// const uploadProfileImage = async (userId, image) => {
-//   await cloudinary.uploader.upload(image, {
-//     allowed_formats: ['jpg', 'png', 'jpeg', 'jfif'],
-//   })
-//   .then(result => {
-//     return User.findById(userId)
-//     .then(user => {
-//       if (!user) {
-//         throw new Error("User does not exist");
-//       }
-//       user.profileImagePath = result.url;
-//       return user.save();
-//     })
-//     .the(() => {
-//       return result;
-//     });
-//   })
-//   .catch(err => {
-//     throw new Error(err.message);
-//   });
-// }
 
 const updateUserProfile = async (userId, userData, image) => {
   const user = await User.findById(userId);
   if (!user) {
     throw new Error("User does not exist");
   }
-
+  user.firstName = userData.firstName || user.firstName;
+  user.lastName = userData.lastName || user.lastName;
+  user.email = userData.email || user.email;
   user.dateOfBirth = userData.dateOfBirth || user.dateOfBirth;
   user.address = userData.address || user.address;
   user.city = userData.city || user.city;
   user.phoneNumber = userData.phoneNumber || user.phoneNumber;
 
   if (image) {
-      console.log("image");
-      
       await cloudinary.uploader.upload(image)
       .then((result) => {
-        console.log(result.url);
+        // console.log(result.url);
         user.profileImagePath = result.url;
         
         
@@ -143,5 +97,13 @@ const updateUserProfile = async (userId, userData, image) => {
   }
 };
 
+const getUserProfile = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new Error("User does not exist");
+  }else{
+    return user;
+  } 
+}
 
-module.exports = { registerUser, loginUser, updateUserProfile };
+module.exports = { registerUser, loginUser, updateUserProfile, getUserProfile };
