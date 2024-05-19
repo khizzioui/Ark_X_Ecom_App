@@ -4,20 +4,27 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require("cors");
 const searchRoute =require('./Routes/searchRoutes')
-const productRoutes = require('./routes/productRoutes');
+const productRoutes = require('./Routes/productRoutes');
 const userRoutes = require('./Routes/userRoutes');
-const adminroute = require('./Routes/adminRoutes')
+const adminroute = require('./Routes/adminRoutes');
+const multipart = require('connect-multiparty')
 
 const auth = require('./Middlewares/authMiddleware');
 const cookieParser = require('cookie-parser');
+const app = express();
+
+app.use(multipart())
 
 
-
-
-app = express();
 app.use(express.json());
+// app.use(express.urlencoded({extended: true}))
 
-app.use(cors());
+app.use(cors(
+    {
+      origin: 'http://localhost:3000',
+      credentials: true,
+    }
+  ));
 app.use(cookieParser());
 
 // routes
