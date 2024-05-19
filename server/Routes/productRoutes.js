@@ -6,7 +6,8 @@ const { productAddMiddleware, productUpdateMiddleware } = require('../Middleware
 
 router.get('/product', productController.getAllProducts);
 router.get('/product/:id', productController.getProductById);
-router.post('/product',authMiddleware,productAddMiddleware, productController.addProduct);
+router.get('/products/:userid', productController.getUserProducts);
+router.post('/product',authMiddleware, productController.addProduct);
 router.patch('/product',authMiddleware,productUpdateMiddleware, productController.updateProduct);
 router.delete('/product/:id',authMiddleware, productController.deleteProduct);
 

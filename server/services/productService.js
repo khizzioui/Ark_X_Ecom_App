@@ -1,6 +1,8 @@
 const Product = require('../Models/product');
 const Location = require('../Models/location');
+const User = require('../Models/user');
 const jwt = require("jsonwebtoken");
+const cloudinary = require("../config/cloudinary");
 
 
 const productService = {
@@ -17,11 +19,16 @@ const productService = {
 
     getProductById: async (productId) => {
         try {
-            const product = await Product.findById(productId).populate('user');
+            const product = await Product.findById(productId);
             if (!product) {
                 return ('Produt not found');
             }
-            return (product);
+            
+            const Nuser = await User.findById(product.toJSON().user);
+            // console.log(Nuser);
+            
+            return {product,Nuser};
+           
         } catch (error) {
             console.error("Error fetching product by ID:", error);
             return ("Error :", error)
@@ -29,11 +36,25 @@ const productService = {
         }
     },
 
-    addProduct: async (productData) => {
+    getUserProducts: async (userId) => {
+        try {
+            const user=await User.findById(userId)
+            if(!user){
+                return ('User not found');
+            }
+            const products = await Product.where('user').equals(userId);
+            console.log(userId);
+            return { products: products };
+        } catch (error) {
+            console.error("Error :", error);
+            return ("Error :", error)
+        }
+    },
+
+    addProduct: async (productData,images) => {
         try {
             const location = await Location.findById(productData.locationId)
             const product = new Product({
-                images: productData.images,
                 title: productData.title,
                 description: productData.description,
                 user: productData.userId,
@@ -42,12 +63,31 @@ const productService = {
                     type: "Point",
                     coordinates: location.location.coordinates
                 },
-                tags: productData.tags,
+                tags: productData.tags.split(','),
                 price: productData.price,
                 quantity: productData.quantity
             });
 
-            const savedProd = await product.save();
+            if (images) {
+                
+                await Promise.all(images.map(async (image) => {
+                    try {
+                        const result = await cloudinary.uploader.upload(image.path);
+                        console.log(result.url);
+                        product.images.push(result.url);
+                        return result.url;
+                    } catch (error) {
+                        console.error(error);
+                        throw error;
+                    }
+                }));
+                
+                
+            }else{
+                product.images.push(process.env.DEFAULT_PRODUCT_IMAGE)
+            }
+
+            const savedProd =  await product.save();
             if(!savedProd){
                 return {error:1};
             }
@@ -87,13 +127,14 @@ const productService = {
     deleteProduct: async (productId, token) => {
 
         try {
+            console.log(token)
             const product = await Product.findById(productId);
             if (!Product) {
                 return ({ error: 1 });
             }
-            const user = jwt.verify(token.accessToken, process.env.ACCESS_TOKEN_SECRET)
-
-            if (product.userId != user.id) {
+            const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+            console.log(product.user.toString())
+            if (product.user.toString() != user.id) {
                 return { error: 3 }
             }
 

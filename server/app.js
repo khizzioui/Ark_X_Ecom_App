@@ -4,28 +4,27 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require("cors");
 const searchRoute =require('./Routes/searchRoutes')
-const productRoutes = require('./routes/productRoutes');
+const productRoutes = require('./Routes/productRoutes');
 const userRoutes = require('./Routes/userRoutes');
-const adminroute = require('./Routes/adminRoutes')
+const adminroute = require('./Routes/adminRoutes');
+const multipart = require('connect-multiparty')
 
 const auth = require('./Middlewares/authMiddleware');
 const cookieParser = require('cookie-parser');
+const app = express();
 
-const cloudinary = require('./config/cloudinary');
+app.use(multipart())
 
 
-app = express();
-// upload image to cloudinary with max size 50mb
-app.use(express.json({limit : '50mb'}));
-app.use(express.urlencoded({limit : '50mb', extended: true}));
 app.use(express.json());
+// app.use(express.urlencoded({extended: true}))
 
 app.use(cors(
     {
-        origin: "http://localhost:3000",
-        credentials: true,
+      origin: 'http://localhost:3000',
+      credentials: true,
     }
-));
+  ));
 app.use(cookieParser());
 
 // routes
