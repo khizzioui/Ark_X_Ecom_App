@@ -32,9 +32,6 @@ app.get('/' ,(req, res) => {
     res.send("/ route")
 });
 
-
-
-
 app.use("/api", adminroute);
 app.use("/api",userRoutes);
 app.use("/api",searchRoute);

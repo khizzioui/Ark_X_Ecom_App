@@ -47,6 +47,10 @@ const userSchema = new mongoose.Schema({
     max: 1024,
     min: 6,
   },
+  profileImagePath: {
+    type: String,
+    required: false,
+  },
 });
 
 module.exports = mongoose.model("User", userSchema);
