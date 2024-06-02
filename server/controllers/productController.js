@@ -15,10 +15,14 @@ const productController = {
         res.json( await productService.getProductById(productId));
     },
 
+    getUserProducts: async (req, res) => {
+        const userId = req.params.userid;
+        res.json( await productService.getUserProducts(userId));
+    },
+
+
     addProduct: async (req,res) => {
-            
         const productData = {
-            images : req.body.images,
             title : req.body.title,
             description : req.body.description || '',
             userId:req.body.userId,
@@ -27,8 +31,8 @@ const productController = {
             price : req.body.price,
             quantity : req.body.quantity || 1
         }
-
-        const result = await productService.addProduct(productData);
+        console.log(req.files.images[0]);
+        const result = await productService.addProduct(productData,req.files.images);
         if(result.error && result.error == 1){
         res.status(404).json({error:"Error saving the Product"})
         } else if(result.error && result.error == 2){
@@ -69,8 +73,8 @@ const productController = {
         const token = req.cookies.accessToken
         const productId = req.params.id;
         
-
-        const result=await productService.deleteProduct(productId,token)
+        console.log(token)
+        const result=await productService.deleteProduct(productId,token.accessToken)
         if(result.error && result.error == 1) 
             res.status(404).json({error:"product not found"})
         else if(result.error && result.error == 2)
