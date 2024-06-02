@@ -7,6 +7,7 @@ const searchRoute =require('./Routes/searchRoutes')
 const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./Routes/userRoutes');
 const adminroute = require('./Routes/adminRoutes')
+const locationRoute = require('./Routes/locationRoute')
 
 const auth = require('./Middlewares/authMiddleware');
 const cookieParser = require('cookie-parser');
@@ -17,7 +18,12 @@ const cookieParser = require('cookie-parser');
 app = express();
 app.use(express.json());
 
-app.use(cors());
+app.use(cors(
+    {
+      origin: 'http://localhost:3000',
+      credentials: true,
+    }
+  ));
 app.use(cookieParser());
 
 // routes
@@ -32,7 +38,7 @@ app.use("/api", adminroute);
 app.use("/api",userRoutes);
 app.use("/api",searchRoute);
 app.use("/api",productRoutes);
-
+app.use("/api",locationRoute);
 
 
 // database connection
