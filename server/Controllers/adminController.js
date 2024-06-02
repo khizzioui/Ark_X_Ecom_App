@@ -20,26 +20,26 @@ const registerSuperadmin = async (req, res) => {
 // Function to log in a superadmin
 const loginSuperadmin = async (req, res) => {
   const data = req.body;
+  console.log(data )
 
   const response = await adminService.adminLogin(data);
   if (response.error) {
       return res.status(400).json({ error: response.error });
   }
-  res.cookie('token', response.token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }).status(200).json({ message: response.message , user: response.admin});
+  res.cookie('token', response.token, { httpOnly: true, secure:true,maxAge: 24 * 60 * 60 * 1000 }).status(200).json({ message: response.message , user: response.admin});
 };
 
 
 // Function to see all users (accessible only by admin)
 const seeAllUsers = async (req, res) => {
   const page = parseInt(req.query.page) || 1; 
-  const limit = parseInt(req.query.limit) || 5;
-
+  const limit = parseInt(req.query.limit) || 10;
   const response = await adminService.seeUsers(page, limit);
-
+  
+  
   if (response.error) {
     return res.status(500).json({ error: response.error });
   }
-
   res.status(200).json({ users: response.users });
 };
 // Function to delete a user (accessible only by admin)
@@ -56,7 +56,7 @@ const deleteUser = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
-  const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page if not provided
+  const limit = parseInt(req.query.limit) || 30; // Default to 10 items per page if not provided
 
   const response = await adminService.seeProducts(page, limit);
 
@@ -71,11 +71,49 @@ const deleteProduct = async (req, res) => {
   try {
     const productId = req.params.productId;
     const response = await adminService.deleteProduct(productId);
-    console.log(response.message);
+    console.log(response);
     res.send({ message: response.message, product: response.product });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+const createCategory = async (req, res) => {
+  const data = req.body;
+  const response = await adminService.createCategory(data);
+  if (response.error) {
+    return res.status(500).json({ error: response.error });
+  }
+  res.status(201).json({ message: 'Category created successfully', category: response });
+};
 
-module.exports = { registerSuperadmin, loginSuperadmin, seeAllUsers, deleteUser, getAllProducts, deleteProduct };
+// Function to update an existing category
+const updateCategory = async (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+  const response = await adminService.updateCategory(id, data);
+  if (response.error) {
+    return res.status(500).json({ error: response.error });
+  }
+  res.status(200).json({ message: 'Category updated successfully', category: response });
+};
+
+// Function to delete a category
+const deleteCategory = async (req, res) => {
+  const { id } = req.params;
+  const response = await adminService.deleteCategory(id);
+  if (response.error) {
+    return res.status(500).json({ error: response.error });
+  }
+  res.status(200).json({ message: 'Category deleted successfully' });
+};
+
+
+const getCategories = async (req, res) => {
+  const response = await adminService.getCategories();
+  if (response.error) {
+    return res.status(500).json({ error: response.error });
+  }
+  res.status(200).json(response);
+};
+
+module.exports = { registerSuperadmin, loginSuperadmin, seeAllUsers, deleteUser, getAllProducts, deleteProduct , createCategory,updateCategory,deleteCategory,getCategories};

@@ -13,7 +13,7 @@ superadminSchema.pre('save', async function (next) {
  next();
 });
 
-const Superadmin = mongoose.model('Superadmin', superadminSchema);
+  const Superadmin = mongoose.model('Superadmin', superadminSchema);
 
 module.exports = Superadmin;
 

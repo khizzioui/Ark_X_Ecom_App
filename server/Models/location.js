@@ -5,8 +5,8 @@ const locationSchema = new mongoose.Schema({
     location : { 
         type : {
             type: String,
-            enum:['point'],
-            default: "point"
+            enum:['Point'],
+            default: "Point"
         },
         coordinates:{
             type:[Number],

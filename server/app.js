@@ -8,6 +8,7 @@ const productRoutes = require('./Routes/productRoutes');
 const userRoutes = require('./Routes/userRoutes');
 const adminroute = require('./Routes/adminRoutes');
 const multipart = require('connect-multiparty')
+const locationRoute = require('./Routes/locationRoute')
 
 const auth = require('./Middlewares/authMiddleware');
 const cookieParser = require('cookie-parser');
@@ -36,7 +37,7 @@ app.use("/api", adminroute);
 app.use("/api",userRoutes);
 app.use("/api",searchRoute);
 app.use("/api",productRoutes);
-
+app.use("/api",locationRoute);
 
 
 // database connection
