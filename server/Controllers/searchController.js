@@ -2,30 +2,31 @@ const searchService  = require('../services/searchService');
 
 
 async function search(req,res){
-    try{
+    
         const data = {
             location : {
                 lat : parseFloat(req.query.lat) || '',
                 lang:parseFloat(req.query.lang) || ''
             },
             page : parseInt(req.query.page) - 1 || 0,
-            limit : parseInt(req.query.limit) || 10,
+            limit : parseInt(req.query.limit) || 9,
             search : req.query.q,
-            radius: req.radius  || 10,
-            ip:req.ip=='::1'?'105.191.26.154':req.ip
+            radius: !req.query.radius || req.query.radius == 0 ? Infinity : req.query.radius,
+            ip:req.ip=='::1'?'196.117.236.26':req.ip,
+            maxprice: req.query.maxprice,
+            minprice: req.query.minprice
         }
-        
-        
-
-        const response = await searchService.search(data);
+        console.log(req.ip)
+        await searchService.search(data).then((response) => {
+            res.status(200).json(response);
+        }).catch((error) => {
+            console.log(error);
+            res.status(500).json(error);
+        });
         
        
-        res.status(200).json(response);
-    }
-    catch (e){
-        console.log(e);
-        res.status(500).json({ error: true, message: "Internal Server Error" });
-    }
+        
+    
 }
 
 
