@@ -1,6 +1,7 @@
 const Product = require('../Models/product');
 const user = require('../Models/user');
 const Superadmin = require('../models/admin')
+const Category = require('../models/category')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const keys = require('../config/keys');
@@ -28,14 +29,20 @@ const adminService = {
   },
 
   adminLogin: async (data) => {
+    console.log('erreur 1')
+
     try {
       const superadmin = await Superadmin.findOne({ username: data.username });
+      console.log('erreur 1')
       if (!superadmin) {
+        console.log('erreur 1')
         return res.status(400).json({ message: 'Superadmin not found' });
+
       }
 
       const validPassword = await bcrypt.compare(data.password, superadmin.password);
       if (!validPassword) {
+        console.log('erreur 2')
         return res.status(400).json({ message: 'Invalid credentials' });
       }
 
@@ -95,6 +102,43 @@ const adminService = {
       return { error: 'Internal server error' };
     }
   },
+  createCategory: async (categoryData) => {
+    try {
+      const newCategory = new Category(categoryData);
+      return await newCategory.save();
+    } catch (error) {
+      console.error('Error creating category:', error);
+      return { error: 'Internal server error' };
+    }
+  },
+
+  updateCategory: async (categoryId, categoryData) => {
+    try {
+      return await Category.findByIdAndUpdate(categoryId, categoryData, { new: true });
+    } catch (error) {
+      console.error('Error updating category:', error);
+      return { error: 'Internal server error' };
+    }
+  },
+
+  deleteCategory: async (categoryId) => {
+    try {
+      return await Category.findByIdAndDelete(categoryId);
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      return { error: 'Internal server error' };
+    }
+  },
+  getCategories: async () => {
+    try {
+      return await Category.find();
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      return { error: 'Internal server error' };
+    }
+  },
+
+  
 };
 
 

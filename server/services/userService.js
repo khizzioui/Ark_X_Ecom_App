@@ -2,7 +2,7 @@ require("dotenv").config();
 const User = require("../Models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
+const cloudinary = require("../config/cloudinary");
 const saltRounds = 10;
 
 const registerUser = async (userData) => {
@@ -27,6 +27,7 @@ const registerUser = async (userData) => {
     firstName,
     lastName,
     email,
+    profileImagePath: "http://res.cloudinary.com/dpr8zbpid/image/upload/v1714650385/bmzoe7lxiuuduiwqlgmg.webp",
     password: hashedPassword,
   });
 
@@ -59,32 +60,50 @@ const loginUser = async (userData) => {
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: "1d" } 
   );
-  // const refreshToken = jwt.sign(
-  //   { id: user._id },
-  //   process.env.REFRESH_TOKEN_SECRET,
-  //   { expiresIn: "7d" }
-  // );
-
+  
   return { accessToken };
 };
 
-const updateUserProfile = async(userId, userData) => {
+const updateUserProfile = async (userId, userData, image) => {
   const user = await User.findById(userId);
   if (!user) {
     throw new Error("User does not exist");
   }
-
-  //update dateOfBirth, address, city, phoneNumber
+  user.firstName = userData.firstName || user.firstName;
+  user.lastName = userData.lastName || user.lastName;
+  user.email = userData.email || user.email;
   user.dateOfBirth = userData.dateOfBirth || user.dateOfBirth;
   user.address = userData.address || user.address;
   user.city = userData.city || user.city;
   user.phoneNumber = userData.phoneNumber || user.phoneNumber;
-  try{
+
+  if (image) {
+      await cloudinary.uploader.upload(image)
+      .then((result) => {
+        // console.log(result.url);
+        user.profileImagePath = result.url;
+        
+        
+      }).then(()=>{
+        console.log(user.profileImagePath);
+        const updatedUser =  user.save();
+        return updatedUser;
+      });
+      
+  }else{
     const updatedUser = await user.save();
+    console.log(updatedUser);
     return updatedUser;
-  }catch(err){
-    throw err;
   }
 };
 
-module.exports = { registerUser, loginUser, updateUserProfile };
+const getUserProfile = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new Error("User does not exist");
+  }else{
+    return user;
+  } 
+}
+
+module.exports = { registerUser, loginUser, updateUserProfile, getUserProfile };

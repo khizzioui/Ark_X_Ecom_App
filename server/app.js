@@ -4,20 +4,28 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require("cors");
 const searchRoute =require('./Routes/searchRoutes')
-const productRoutes = require('./routes/productRoutes');
+const productRoutes = require('./Routes/productRoutes');
 const userRoutes = require('./Routes/userRoutes');
-const adminroute = require('./Routes/adminRoutes')
+const adminroute = require('./Routes/adminRoutes');
+const multipart = require('connect-multiparty')
+const locationRoute = require('./Routes/locationRoute')
 
 const auth = require('./Middlewares/authMiddleware');
 const cookieParser = require('cookie-parser');
+const app = express();
+
+app.use(multipart())
 
 
-
-
-app = express();
 app.use(express.json());
+// app.use(express.urlencoded({extended: true}))
 
-app.use(cors());
+app.use(cors(
+    {
+      origin: 'http://localhost:3000',
+      credentials: true,
+    }
+  ));
 app.use(cookieParser());
 
 // routes
@@ -25,14 +33,11 @@ app.get('/' ,(req, res) => {
     res.send("/ route")
 });
 
-
-
-
 app.use("/api", adminroute);
 app.use("/api",userRoutes);
 app.use("/api",searchRoute);
 app.use("/api",productRoutes);
-
+app.use("/api",locationRoute);
 
 
 // database connection
