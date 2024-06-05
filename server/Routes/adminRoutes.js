@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerSuperadmin, loginSuperadmin, seeAllUsers, deleteUser, getAllProducts, deleteProduct ,updateCategory,createCategory,deleteCategory,getCategories} = require('../controllers/adminController');
+const { registerSuperadmin, loginSuperadmin, seeAllUsers, deleteUser, getAllProducts, deleteProduct ,updateCategory,createCategory,deleteCategory,getCategories,getUserCount,getProductCount,getCategoryCount} = require('../controllers/adminController');
 const { isAdmin ,adminValidationMiddleware } = require('../Middlewares/adminAuth');
 
 // Register a new superadmin
@@ -25,6 +25,10 @@ router.put('/admin/categories/:id', isAdmin, updateCategory);
 router.delete('/admin/categories/:id', isAdmin, deleteCategory);
 
 router.get('/admin/categories', isAdmin, getCategories);
+
+router.get('/admin/users/count', isAdmin, getUserCount);
+router.get('/admin/products/count', isAdmin, getProductCount);
+router.get('/admin/categories/count', isAdmin, getCategoryCount);
 
 
 module.exports = router;
