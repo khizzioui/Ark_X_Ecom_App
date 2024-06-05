@@ -137,6 +137,35 @@ const adminService = {
       return { error: 'Internal server error' };
     }
   },
+  getUserCount: async () => {
+    try {
+      const count = await user.countDocuments();
+      return { count: count };
+    } catch (error) {
+      console.error('Error counting users:', error);
+      return { error: 'Internal server error' };
+    }
+  },
+
+  getProductCount: async () => {
+    try {
+      const count = await Product.countDocuments();
+      return { count: count };
+    } catch (error) {
+      console.error('Error counting products:', error);
+      return { error: 'Internal server error' };
+    }
+  },
+
+  getCategoryCount: async () => {
+    try {
+      const count = await Category.countDocuments();
+      return { count: count };
+    } catch (error) {
+      console.error('Error counting categories:', error);
+      return { error: 'Internal server error' };
+    }
+  },
 
   
 };

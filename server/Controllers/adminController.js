@@ -55,8 +55,8 @@ const deleteUser = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
-  const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
-  const limit = parseInt(req.query.limit) || 30; // Default to 10 items per page if not provided
+  const page = parseInt(req.query.page) || 10; // Default to page 1 if not provided
+  const limit = parseInt(req.query.limit) || 5; // Default to 10 items per page if not provided
 
   const response = await adminService.seeProducts(page, limit);
 
@@ -115,5 +115,31 @@ const getCategories = async (req, res) => {
   }
   res.status(200).json(response);
 };
+const getUserCount = async (req, res) => {
+  try {
+    const response = await adminService.getUserCount();
+    res.status(200).json({ count: response.count });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 
-module.exports = { registerSuperadmin, loginSuperadmin, seeAllUsers, deleteUser, getAllProducts, deleteProduct , createCategory,updateCategory,deleteCategory,getCategories};
+const getProductCount = async (req, res) => {
+  try {
+    const response = await adminService.getProductCount();
+    res.status(200).json({ count: response.count });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+const getCategoryCount = async (req, res) => {
+  try {
+    const response = await adminService.getCategoryCount();
+    res.status(200).json({ count: response.count });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+module.exports = { registerSuperadmin, loginSuperadmin, seeAllUsers, deleteUser, getAllProducts, deleteProduct , createCategory,updateCategory,deleteCategory,getCategories,getUserCount,getProductCount,getCategoryCount};
